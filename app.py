@@ -1,8 +1,12 @@
+from sched import scheduler
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import os
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from dotenv import load_dotenv
 import logging
+import asyncio
 
 # Logs
 
@@ -17,6 +21,9 @@ load_dotenv()
 # Colocar o Token do bot aqui
 env = load_dotenv()
 token = os.getenv("TOKEN")
+
+# Armazenar horários agendados
+agendamentos = {}
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -52,22 +59,72 @@ async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
         """
     )
     
-app = ApplicationBuilder().token(token).build()
+# Envia mensagens automáticas
+async def enviar_mensagem(context: ContextTypes.DEFAULT_TYPE):
+    job = context.job
+    await context.bot.send_message(chat_id = job.chat_id, text = "🔥Atualização diária da FURIA!")
+    
+# Comando para agendar
+
+async def agendar(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.args:
+        await update.message.reply_text("Formato correto: /agendar HH:MM (24h)")
+        return
+    
+    hora_minuto = context.args[0].strip()
+    print(f"Argumento recebido: {hora_minuto}") # Debug
+    
+    if ":" not in hora_minuto:
+        await update.message.reply_text("⚠️ Erro no formato! use /agendar HH:MM (24h)")
+        return
+    
+    try:
+        hora, minuto = map(int, hora_minuto.split(":"))
+        if not (0 <= hora <= 23 and 0 <= minuto <= 59):
+            raise ValueError("Hora ou minuto fora inválidos.")
+        
+        chat_id = update.effective_chat.id
+        agendamentos[chat_id] = hora_minuto
+        
+        # Remove agendamento anterior (se já houver)
+        try:
+            scheduler.remove_job(str(chat_id))
+        except Exception as e:
+            print(f"Nenhum job anterior pra remover: {e}")  # Debug
+        
+        # Agenda nova tarefa
+        scheduler.add_job(
+            enviar_mensagem,
+            CronTrigger(hour = hora, minute = minuto),
+            id = str(chat_id),
+            kwargs = {"context" : context},
+            replace_existing = True,
+        )
+        
+        await update.message.reply_text(f"✅ Agendado! Você irá receber mensagens todos os dias às {hora_minuto}.")
+    except Exception as e:
+        await update.message.reply_text(f"⚠️ Erro no formato! Use /agendar HH:MM (24h).")
+        
+async def post_init(application):
+    scheduler.start()
+    print("Scheduler iniciado dentro do loop!")
+    
+        
+# Setup do Bot
+app = ApplicationBuilder().token(token).post_init(post_init).build()
+
+# Agendador global
+scheduler = AsyncIOScheduler()
 
 # Comandos
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("proximos_jogos", proximos_jogos))
 app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
+app.add_handler(CommandHandler("agendar", agendar))
 
 print(f"TOKEN: {token}")
 
-print("Bot da FURIA rodando!")
-
-app.run_polling()
-
-
-
-
-
-
+if __name__ == "__main__":
+    print("Bot da FURIA rodando")
+    app.run_polling()
