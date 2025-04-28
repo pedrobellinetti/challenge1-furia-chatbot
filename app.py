@@ -11,6 +11,15 @@ import asyncio
 import datetime
 import requests
 from bs4 import BeautifulSoup
+from selenium.webdriver.common.by import By # web-scrapping
+from selenium.webdriver.chrome.service import Service #web-scrapping
+from selenium.webdriver.chrome.options import Options #web-scrapping
+from time import sleep
+import random
+
+
+# Configuração chromedriver para web-scrapping
+chrome_driver_path = "/mnt/e/chromedriver/chromedriver.exe" # Onde está instalado o chromedriver
 
 # Logs
 
@@ -51,7 +60,7 @@ async def proximos_jogos(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # hltv = HLTV()
     
     # TESTE 
-    matches = buscar_proximos_jogos()
+    matches = jogos_futuros()
 
     # Filtrar jogos da FURIA
 
@@ -71,51 +80,53 @@ async def proximos_jogos(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     print(matches)
         
-def buscar_proximos_jogos():
-    url = "https://www.hltv.org/matches"
-    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-    soup = BeautifulSoup(response.text, 'lxml')
+# def jogos_futuros():
+#     url = "https://www.hltv.org/matches"
+#     response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+#     soup = BeautifulSoup(response.text, 'lxml')
     
-    jogos = []
-    for match in soup.select('.upcomingMatch'):
-        team1 = match.select_one('.matchTeamName')
-        team2 = match.select('.matchTeamName')
-        timestamp = match.select_one('.matchTime')
+#     jogos = []
+#     for match in soup.select('.upcomingMatch'):
+#         team1 = match.select_one('.matchTeamName')
+#         team2 = match.select('.matchTeamName')
+#         timestamp = match.select_one('.matchTime')
 
-        # Valida se é FURIA
-        if team1 and timestamp:
-            teams = [t.text.strip() for t in team2]
-            if any("FURIA" in t for t in teams):
-                time_unix = int(timestamp['data-unix']) / 1000
-                data_hora = datetime.utcfromtimestamp(time_unix).strftime('%d/%m/%Y %H:%M UTC')
-                jogos.append(f"{teams[0]} x {teams[1]} - {data_hora}")
+#         # Valida se é FURIA
+#         if team1 and timestamp:
+#             teams = [t.text.strip() for t in team2]
+#             if any("FURIA" in t for t in teams):
+#                 time_unix = int(timestamp['data-unix']) / 1000
+#                 data_hora = datetime.utcfromtimestamp(time_unix).strftime('%d/%m/%Y %H:%M UTC')
+#                 jogos.append(f"{teams[0]} x {teams[1]} - {data_hora}")
     
-    return jogos
+#     return jogos
 
-# TESTE - RETIRAR DEPOIS
-matches = buscar_proximos_jogos
-print(matches)
+# # TESTE - RETIRAR DEPOIS
+# matches = jogos_futuros
+# print(matches)
 
-def buscar_jogos_passados():
-    url = "https://liquipedia.net/counterstrike/FURIA"
-    headers = {"User-Agent": "Mozilla/5.0"}
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, 'lxml')
+# def historicos_jogos():
+#     url = "https://liquipedia.net/counterstrike/FURIA"
+#     headers = {"User-Agent": "Mozilla/5.0"}
+#     response = requests.get(url, headers=headers)
+#     soup = BeautifulSoup(response.text, 'lxml')
 
-    resultados = []
-    # Seleciona as linhas de partidas recentes
-    for row in soup.select('div.recent-matches div.infobox'):
-        campeonato = row.select_one('div.infobox-header').get_text(strip=True)
-        partidas = row.select('div.infobox-cell-2')
-        
-        for partida in partidas:
-            resultado = partida.get_text(strip=True)
-            resultados.append(f"{campeonato} - {resultado}")
-
-    return resultados
+#     resultados = []
+#     # Pega a seção 'Recent Results' (usando seletor da tabela)
+#     for match_row in soup.select('table.infobox_matches_content tr'):
+#         cells = match_row.select('td')
+#         if len(cells) >= 5:
+#             data = cells[0].get_text(strip=True)
+#             team1 = cells[1].get_text(strip=True)
+#             score = cells[2].get_text(strip=True)
+#             team2 = cells[3].get_text(strip=True)
+#             torneio = cells[4].get_text(strip=True)
+#             resultados.append(f"{data}: {team1} {score} {team2} ({torneio})")
+    
+#     return resultados
 
 async def resultados_passados(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    resultados = buscar_jogos_passados()
+    resultados = historicos_jogos()
     if resultados:
         mensagem = "\n".join(resultados)
     else:
@@ -203,8 +214,8 @@ app.add_handler(CommandHandler("proximos_jogos", proximos_jogos))
 app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
 app.add_handler(CommandHandler("agendar", agendar))
-app.add_handler(CommandHandler("buscar_proximos_jogos", buscar_proximos_jogos))
-app.add_handler(CommandHandler("resultados_passados", resultados_passados))
+app.add_handler(CommandHandler("jogos_futuros", jogos_futuros))
+app.add_handler(CommandHandler("historico_jogos", historicos_jogos))
 
 # Adiciona o handler global de erros
 app.add_error_handler(erro_handler)
