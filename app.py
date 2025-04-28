@@ -29,6 +29,13 @@ token = os.getenv("TOKEN")
 # Armazenar horários agendados
 agendamentos = {}
 
+async def erro_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    print(f"Erro detectado: {context.error}")
+    if update and hasattr(update, 'message'):
+        await update.message.reply_text("⚠️ Ocorreu um erro! Tente novamente mais tarde.")
+
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         """
@@ -88,6 +95,35 @@ def buscar_proximos_jogos():
 # TESTE - RETIRAR DEPOIS
 matches = buscar_proximos_jogos
 print(matches)
+
+def buscar_jogos_passados():
+    url = "https://liquipedia.net/counterstrike/FURIA"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'lxml')
+
+    resultados = []
+    # Seleciona as linhas de partidas recentes
+    for row in soup.select('div.recent-matches div.infobox'):
+        campeonato = row.select_one('div.infobox-header').get_text(strip=True)
+        partidas = row.select('div.infobox-cell-2')
+        
+        for partida in partidas:
+            resultado = partida.get_text(strip=True)
+            resultados.append(f"{campeonato} - {resultado}")
+
+    return resultados
+
+async def resultados_passados(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    resultados = buscar_jogos_passados()
+    if resultados:
+        mensagem = "\n".join(resultados)
+    else:
+        mensagem = "Nenhum jogo passado encontrado."
+    
+    await update.message.reply_text(mensagem)
+    
+
                 
     
 async def curiosidades(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -168,6 +204,10 @@ app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
 app.add_handler(CommandHandler("agendar", agendar))
 app.add_handler(CommandHandler("buscar_proximos_jogos", buscar_proximos_jogos))
+app.add_handler(CommandHandler("resultados_passados", resultados_passados))
+
+# Adiciona o handler global de erros
+app.add_error_handler(erro_handler)
 
 print(f"TOKEN: {token}")
 
