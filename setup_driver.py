@@ -24,7 +24,7 @@ def setup_driver():
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)
     
-    service = Service(executable_path = chromedriver_path)
+    service = Service(executable_path = chrome_driver_path)
     driver = webdriver.Chrome(service = service, options = options)
     
     # Evitar detecção pelo site

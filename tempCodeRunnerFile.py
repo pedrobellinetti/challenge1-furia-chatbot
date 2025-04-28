@@ -1,1 +1,1 @@
-from HLTV import HLTV
+chromedriver = "/mnt/e/chromedriver/chromedriver-win64/chromedriver.exe" # Onde está instalado o chromedriver
