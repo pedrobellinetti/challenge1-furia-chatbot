@@ -2,13 +2,21 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import os
 from dotenv import load_dotenv
+import logging
+
+# Logs
+
+logging.basicConfig (
+    format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level = logging.INFO
+)
 
 # .env
 load_dotenv()
 
 # Colocar o Token do bot aqui
 env = load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN")
+token = os.getenv("TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -44,7 +52,7 @@ async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
         """
     )
     
-app = ApplicationBuilder().token(TOKEN).build()
+app = ApplicationBuilder().token(token).build()
 
 # Comandos
 app.add_handler(CommandHandler("start", start))
@@ -52,8 +60,11 @@ app.add_handler(CommandHandler("proximos_jogos", proximos_jogos))
 app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
 
+print(f"TOKEN: {token}")
+
 print("Bot da FURIA rodando!")
-app.run_polling
+
+app.run_polling()
 
 
 
