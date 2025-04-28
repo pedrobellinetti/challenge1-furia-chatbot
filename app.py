@@ -22,7 +22,7 @@ import setup_driver
 
 
 # Configuração chromedriver para web-scrapping
-chrome_driver_path = "E:\\chromedriver\\chromedriver-win64\\chromedriver.exe" # Onde está instalado o chromedriver
+chrome_driver_path = "/mnt/e/chromedriver/chromedriver-win64/chromedriver.exe" # Onde está instalado o chromedriver
 
 # Logs
 

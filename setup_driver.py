@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 import os
 
 # Configurações do chromedriver
-chrome_driver_path = "E:\\chromedriver\\chromedriver-win64\\chromedriver.exe" # Onde está instalado o chromedriver
+chrome_driver_path = "/mnt/e/chromedriver/chromedriver-win64/chromedriver.exe" # Onde está instalado o chromedriver
 
 # Token do bot
 load_dotenv()
