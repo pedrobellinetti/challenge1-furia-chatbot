@@ -7,6 +7,10 @@ from apscheduler.triggers.cron import CronTrigger
 from dotenv import load_dotenv
 import logging
 import asyncio
+# from HLTV import HLTV
+import datetime
+import requests
+from bs4 import BeautifulSoup
 
 # Logs
 
@@ -35,15 +39,56 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     
 async def proximos_jogos(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Automatizar depois
-    await update.message.reply_text(
-        """
-        📆 Próximo jogo da FURIA:
-        FURIA X Team Liquid
-        Data: 30/12/2025 - 19h00 (BRT)
+    # Busca próximos jogos
+    
+    # hltv = HLTV()
+    
+    # TESTE 
+    matches = buscar_proximos_jogos()
+
+    # Filtrar jogos da FURIA
+
+    # furia_matches = [m for m in matches if "FURIA" in (m['team1']['name'] or "") or "FURIA" in (m['team2']['name'] or "")]
+    
+    # if furia_matches:
+    #     match = furia_matches[0]
+    #     game_time = datetime.datetime.utcfromtimestamp(match['time'] / 1000).strftime('%d/%m/%Y %H:%M (UTC)')
+    #     await update.message.reply_text(f"📆 Próximo jogo da FURIA:\n{match['team1']['name']} x {match['team2']['name']}\nData: {game_time}")
+    # else:
+    #     await update.message.reply_text("🔍 Nenhum jogo da FURIA encontrado nos próximos dias.")
+
+
+
+    # for match in furia_matches:
+    #     print(f"{match["team1"]["name"]} vs {match["team2"]["name"]} - {match["time"]}")
+    
+    print(matches)
         
-        """
-    )
+def buscar_proximos_jogos():
+    url = "https://www.hltv.org/matches"
+    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+    soup = BeautifulSoup(response.text, 'lxml')
+    
+    jogos = []
+    for match in soup.select('.upcomingMatch'):
+        team1 = match.select_one('.matchTeamName')
+        team2 = match.select('.matchTeamName')
+        timestamp = match.select_one('.matchTime')
+
+        # Valida se é FURIA
+        if team1 and timestamp:
+            teams = [t.text.strip() for t in team2]
+            if any("FURIA" in t for t in teams):
+                time_unix = int(timestamp['data-unix']) / 1000
+                data_hora = datetime.utcfromtimestamp(time_unix).strftime('%d/%m/%Y %H:%M UTC')
+                jogos.append(f"{teams[0]} x {teams[1]} - {data_hora}")
+    
+    return jogos
+
+# TESTE - RETIRAR DEPOIS
+matches = buscar_proximos_jogos
+print(matches)
+                
     
 async def curiosidades(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -122,6 +167,7 @@ app.add_handler(CommandHandler("proximos_jogos", proximos_jogos))
 app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
 app.add_handler(CommandHandler("agendar", agendar))
+app.add_handler(CommandHandler("buscar_proximos_jogos", buscar_proximos_jogos))
 
 print(f"TOKEN: {token}")
 
