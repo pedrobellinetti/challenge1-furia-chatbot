@@ -13,7 +13,7 @@ from setup_driver import *
 
 # Scrapper próximas partidas
 
-def proximos_jogos():
+def buscar_proximos_jogos():
     driver = setup_driver()
     driver.get("https://www.hltv.org/team/8297/furia#tab-matchesBox")
     sleep(random.uniform(2, 4))
