@@ -151,14 +151,11 @@ async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
         📰 Última notícia: FURIA anuncia novo coach para a temporada de 2025!
         """
     )
-    
-
         
 async def post_init(application):
     scheduler.start()
     print("Scheduler iniciado dentro do loop!")
-    
-        
+      
 # Setup do Bot
 app = ApplicationBuilder().token(token).post_init(post_init).build()
 
@@ -169,6 +166,7 @@ scheduler = AsyncIOScheduler()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("partidas_futuras", partidas_futuras))
 app.add_handler(CommandHandler("historico_partidas", historico_partidas))
+app.add_handler(CommandHandler("agendar_lembrete_partida", agendar_lembrete_partida))
 app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
 app.add_handler(CommandHandler("agendar", agendar))
