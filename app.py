@@ -19,7 +19,8 @@ import random
 import comandos_telegram
 import funcoes_busca_jogos
 import setup_driver
-
+from datetime import datetime
+from buscar_partdas_furia import *
 
 # Configuração chromedriver para web-scrapping
 chrome_driver_path = "/mnt/e/chromedriver/chromedriver-win64/chromedriver.exe" # Onde está instalado o chromedriver
@@ -54,6 +55,31 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         """
     )
+    
+async def historico_partidas(update: object, context: ContextTypes.DEFAULT_TYPE):
+    passadas, _ = buscar_partidas_furia()
+    
+    if not passadas:
+        await update.message.reply_text(
+            "Nenhuma partida passada encontrada"
+        )
+        return
+    return "\n\n".join(passadas) 
+
+async def partidas_futuras(update: object, context: ContextTypes.DEFAULT_TYPE):
+    _, futuras = buscar_partidas_furia()
+    
+    if not futuras:
+        await update.message.reply_text(
+            "Nenhuma partida futura encontrada"
+        )
+        return
+    return "\n\n".join(futuras) 
+
+# Agendar lembrete para partidas futuras
+
+async def agendar_lembrete()
+        
     
 async def curiosidades(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
