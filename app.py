@@ -64,7 +64,9 @@ async def historico_partidas(update: object, context: ContextTypes.DEFAULT_TYPE)
             "Nenhuma partida passada encontrada"
         )
         return
-    return "\n\n".join(passadas) 
+    
+    texto = "\n\n".join(passadas)
+    await update.message.reply_text(texto)
 
 async def partidas_futuras(update: object, context: ContextTypes.DEFAULT_TYPE):
     _, futuras = buscar_partidas_furia()
@@ -74,25 +76,25 @@ async def partidas_futuras(update: object, context: ContextTypes.DEFAULT_TYPE):
             "Nenhuma partida futura encontrada"
         )
         return
-    return "\n\n".join(futuras) 
+    texto =  "\n\n".join(futuras) 
+    await update.message.reply_text(texto)
 
 # Agendar lembrete para partidas futuras
 
-async def agendar_lembrete()
-        
-    
-async def curiosidades(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        """
-        Curiosidade: A FURIA foi fundada em 2017 e já chegou no top 5 mundial!
-        """
+async def enviar_lembrete(context: ContextTypes.DEFAULT_TYPE):
+    job = context.job
+    await context.bot.send_message(
+        chat_id=job.chat_id,
+        text=f"⏰ Lembrete de partida!\n{job.data}"
     )
-    
-async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        """
-        📰 Última notícia: FURIA anuncia novo coach para a temporada de 2025!
-        """
+
+# Agendar lembrete com horário específico
+def agendar_lembrete_partida(update, context: ContextTypes.DEFAULT_TYPE, datetime_obj: datetime, mensagem: str):
+    context.job_queue.run_once(
+        enviar_lembrete,
+        when = datetime_obj,
+        chat_id = update.effective_chat.id,
+        data = mensagem
     )
     
 # Envia mensagens automáticas
@@ -106,6 +108,20 @@ async def agendar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
         await update.message.reply_text("Formato correto: /agendar HH:MM (24h)")
         return
+     
+async def curiosidades(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        """
+        Curiosidade: A FURIA foi fundada em 2017 e já chegou no top 5 mundial!
+        """
+    )
+    
+async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        """
+        📰 Última notícia: FURIA anuncia novo coach para a temporada de 2025!
+        """
+    )
     
     hora_minuto = context.args[0].strip()
     print(f"Argumento recebido: {hora_minuto}") # Debug
@@ -154,8 +170,8 @@ scheduler = AsyncIOScheduler()
 
 # Comandos
 app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("proximos_jogos", comandos_telegram.proximos_jogos))
-app.add_handler(CommandHandler("resultados", comandos_telegram.resultados))
+app.add_handler(CommandHandler("partidas_futuras", partidas_futuras))
+app.add_handler(CommandHandler("historico_partidas", historico_partidas))
 app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
 app.add_handler(CommandHandler("agendar", agendar))
