@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 import logging
 from datetime import datetime
 from buscar_partidas_furia import *
+from dateutil import parser
+
 
 # Configuração chromedriver para web-scrapping
 chrome_driver_path = "/mnt/e/chromedriver/chromedriver-win64/chromedriver.exe" # Onde está instalado o chromedriver
@@ -67,8 +69,18 @@ async def partidas_futuras(update: object, context: ContextTypes.DEFAULT_TYPE):
             "Nenhuma partida futura encontrada"
         )
         return
-    texto =  "\n\n".join(futuras) 
-    await update.message.reply_text(texto)
+    
+    # Salva para utilizar com /lembrar
+    context.chat_data["partidas_futuras"] = futuras
+    
+    texto =  "\n\n".join(
+        [f"{i+1}. {p}"
+        for i,p in enumerate(futuras)]
+        )
+    await update.message.reply_text
+    (f"""Próximas partidas: \n\n{texto}\n\n
+    Use /lembrar [número] para receber lembrete"""
+    )
 
 # Agendar lembrete para partidas futuras
 
@@ -80,7 +92,7 @@ async def enviar_lembrete(context: ContextTypes.DEFAULT_TYPE):
     )
 
 # Agendar lembrete com horário específico
-def agendar_lembrete_partida(update, context: ContextTypes.DEFAULT_TYPE, datetime_obj: datetime, mensagem: str):
+def lembrar_partida(update, context: ContextTypes.DEFAULT_TYPE, datetime_obj: datetime, mensagem: str):
     context.job_queue.run_once(
         enviar_lembrete,
         when = datetime_obj,
@@ -162,7 +174,7 @@ scheduler = AsyncIOScheduler()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("partidas_futuras", partidas_futuras))
 app.add_handler(CommandHandler("historico_partidas", historico_partidas))
-app.add_handler(CommandHandler("agendar_lembrete_partida", agendar_lembrete_partida))
+app.add_handler(CommandHandler("lembrar_partida", lembrar_partida))
 app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
 app.add_handler(CommandHandler("agendar", agendar))
