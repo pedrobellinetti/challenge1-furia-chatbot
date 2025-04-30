@@ -15,7 +15,7 @@ import comandos_telegram
 import funcoes_busca_jogos
 import setup_driver
 from datetime import datetime
-from buscar_partdas_furia import *
+from buscar_partidas_furia import *
 
 # Configuração chromedriver para web-scrapping
 chrome_driver_path = "/mnt/e/chromedriver/chromedriver-win64/chromedriver.exe" # Onde está instalado o chromedriver
