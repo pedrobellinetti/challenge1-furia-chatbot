@@ -145,3 +145,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Teste web-scrapping liquipedia
+
+/mnt/e/Furia/challenge1-furia-fan-chatbot/teste_liquipedia.py

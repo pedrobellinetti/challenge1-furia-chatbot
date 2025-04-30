@@ -11,9 +11,6 @@ import requests
 from bs4 import BeautifulSoup
 from time import sleep
 import random
-import comandos_telegram
-import funcoes_busca_jogos
-import setup_driver
 from datetime import datetime
 from buscar_partidas_furia import *
 
