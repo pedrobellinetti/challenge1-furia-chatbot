@@ -38,7 +38,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         """
         🔥Bem-vindo(a) ao FURIA Clutch Bot! 
-        Use /proximos_jogos, /curiosidades ou /noticias
+        Use /historico_partidas para ter acesso ao histórico de partidas da FURIA
+        Use /partidas_futuras para ter acesso as partidas futuras da FURIA
+        Use /agendar_lembrete_partida para receber um lembrete para a próxima partida da FURIA
+        
+        Use /curiosidades ou /noticias
         
         """
     )
