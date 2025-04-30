@@ -6,11 +6,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from dotenv import load_dotenv
 import logging
-import asyncio
-import requests
-from bs4 import BeautifulSoup
-from time import sleep
-import random
 from datetime import datetime
 from buscar_partidas_furia import *
 
