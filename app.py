@@ -108,20 +108,6 @@ async def agendar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
         await update.message.reply_text("Formato correto: /agendar HH:MM (24h)")
         return
-     
-async def curiosidades(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        """
-        Curiosidade: A FURIA foi fundada em 2017 e já chegou no top 5 mundial!
-        """
-    )
-    
-async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        """
-        📰 Última notícia: FURIA anuncia novo coach para a temporada de 2025!
-        """
-    )
     
     hora_minuto = context.args[0].strip()
     print(f"Argumento recebido: {hora_minuto}") # Debug
@@ -156,6 +142,22 @@ async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"✅ Agendado! Você irá receber mensagens todos os dias às {hora_minuto}.")
     except Exception as e:
         await update.message.reply_text(f"⚠️ Erro no formato! Use /agendar HH:MM (24h).")
+     
+async def curiosidades(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        """
+        Curiosidade: A FURIA foi fundada em 2017 e já chegou no top 5 mundial!
+        """
+    )
+    
+async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        """
+        📰 Última notícia: FURIA anuncia novo coach para a temporada de 2025!
+        """
+    )
+    
+
         
 async def post_init(application):
     scheduler.start()
