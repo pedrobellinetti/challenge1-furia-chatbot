@@ -7,13 +7,8 @@ from apscheduler.triggers.cron import CronTrigger
 from dotenv import load_dotenv
 import logging
 import asyncio
-# from HLTV import HLTV
-import datetime
 import requests
 from bs4 import BeautifulSoup
-from selenium.webdriver.common.by import By # web-scrapping
-from selenium.webdriver.chrome.service import Service #web-scrapping
-from selenium.webdriver.chrome.options import Options #web-scrapping
 from time import sleep
 import random
 import comandos_telegram
