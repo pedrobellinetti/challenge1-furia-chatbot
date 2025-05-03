@@ -9,6 +9,7 @@ import logging
 from datetime import datetime
 from buscar_partidas_furia import *
 from dateutil import parser
+import lembrar
 
 
 # Configuração chromedriver para web-scrapping
@@ -178,6 +179,8 @@ app.add_handler(CommandHandler("lembrar_partida", lembrar_partida))
 app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
 app.add_handler(CommandHandler("agendar", agendar))
+
+app.add_handler(CommandHandler("lembrar", lembrar.lembrar))
 
 # Adiciona o handler global de erros
 app.add_error_handler(erro_handler)
