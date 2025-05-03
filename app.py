@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 from buscar_partidas_furia import *
 from dateutil import parser
-import lembrar
+from lembrar import lembrar, lembrar_partida
 
 
 # Configuração chromedriver para web-scrapping
@@ -83,24 +83,6 @@ async def partidas_futuras(update: object, context: ContextTypes.DEFAULT_TYPE):
     Use /lembrar [número] para receber lembrete"""
     )
 
-# Agendar lembrete para partidas futuras
-
-async def enviar_lembrete(context: ContextTypes.DEFAULT_TYPE):
-    job = context.job
-    await context.bot.send_message(
-        chat_id=job.chat_id,
-        text=f"⏰ Lembrete de partida!\n{job.data}"
-    )
-
-# Agendar lembrete com horário específico
-def lembrar_partida(update, context: ContextTypes.DEFAULT_TYPE, datetime_obj: datetime, mensagem: str):
-    context.job_queue.run_once(
-        enviar_lembrete,
-        when = datetime_obj,
-        chat_id = update.effective_chat.id,
-        data = mensagem
-    )
-    
 # Envia mensagens automáticas
 async def enviar_mensagem(context: ContextTypes.DEFAULT_TYPE):
     job = context.job
@@ -180,7 +162,7 @@ app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
 app.add_handler(CommandHandler("agendar", agendar))
 
-app.add_handler(CommandHandler("lembrar", lembrar.lembrar))
+app.add_handler(CommandHandler("lembrar", lembrar))
 
 # Adiciona o handler global de erros
 app.add_error_handler(erro_handler)

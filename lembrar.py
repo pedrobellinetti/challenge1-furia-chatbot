@@ -1,5 +1,8 @@
 from buscar_partidas_furia import *
-from app import *
+from app import lembrar_partida, enviar_lembrete
+from dateutil import parser
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 async def lembrar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
