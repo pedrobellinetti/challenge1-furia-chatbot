@@ -10,6 +10,7 @@ from datetime import datetime
 from buscar_partidas_furia import *
 from dateutil import parser
 import asyncio
+from noticias import buscar_noticias_furia
 from telegram import Update, Message, Chat, User
 from telegram.ext import CallbackContext
 from lembretes import agendar_lembrete_partida, enviar_lembrete_partida
@@ -141,11 +142,9 @@ async def curiosidades(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     
 async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        """
-        📰 Última notícia: FURIA anuncia novo coach para a temporada de 2025!
-        """
-    )
+    texto = buscar_noticias_furia()
+    await update.message.reply_text(texto, parse_mode="Markdown")
+
         
 async def post_init(application):
     scheduler.start()
