@@ -142,8 +142,15 @@ async def curiosidades(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     
 async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    texto = buscar_noticias_furia()
-    await update.message.reply_text(texto, parse_mode="Markdown")
+    noticias = buscar_noticias_furia()
+    
+    if not noticias:
+        await update.message.reply_text("⚠️ Nenhuma notícia encontrada.")
+        return
+    
+    texto = "\n\n".join(noticias)
+    await update.message.reply_text(f"🗞️ Últimas notícias da FURIA:\n\n{texto}")
+
 
         
 async def post_init(application):
