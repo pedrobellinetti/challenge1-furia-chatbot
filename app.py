@@ -45,12 +45,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         """
         🔥Bem-vindo(a) ao FURIA Clutch Bot! 
-        Use /historico_partidas para ter acesso ao histórico de partidas da FURIA
-        Use /partidas_futuras para ter acesso as partidas futuras da FURIA
-        Use /agendar_lembrete_partida para receber um lembrete para a próxima partida da FURIA
-        
-        Use /curiosidades ou /noticias
-        
+        /historico_partidas — Mostra partidas anteriores e seus resultados
+        /partidas_futuras — Exibe as próximas partidas
+        /lembrar_partida — Agenda lembrete para partidas futuras
+        /agendar HH:MM — Define um horário fixo para notificações diárias
+        /curiosidades — Exibe fatos interessantes sobre a FURIA
+        /noticias — Busca notícias em tempo real da equipe via Liquipedia        
         """
     )
     
