@@ -9,11 +9,14 @@ import logging
 from datetime import datetime
 from buscar_partidas_furia import *
 from dateutil import parser
-from lembrar import lembrar, lembrar_partida
+import asyncio
+from telegram import Update, Message, Chat, User
+from telegram.ext import CallbackContext
+from lembretes import agendar_lembrete_partida, enviar_lembrete_partida
 
 
-# Configuração chromedriver para web-scrapping
-chrome_driver_path = "/mnt/e/chromedriver/chromedriver-win64/chromedriver.exe" # Onde está instalado o chromedriver
+# Agendador global
+scheduler = AsyncIOScheduler()
 
 # Logs
 
@@ -126,6 +129,7 @@ async def agendar(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         
         await update.message.reply_text(f"✅ Agendado! Você irá receber mensagens todos os dias às {hora_minuto}.")
+
     except Exception as e:
         await update.message.reply_text(f"⚠️ Erro no formato! Use /agendar HH:MM (24h).")
      
@@ -146,23 +150,22 @@ async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def post_init(application):
     scheduler.start()
     print("Scheduler iniciado dentro do loop!")
+    return None
+
       
 # Setup do Bot
 app = ApplicationBuilder().token(token).post_init(post_init).build()
-
-# Agendador global
-scheduler = AsyncIOScheduler()
 
 # Comandos
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("partidas_futuras", partidas_futuras))
 app.add_handler(CommandHandler("historico_partidas", historico_partidas))
-app.add_handler(CommandHandler("lembrar_partida", lembrar_partida))
+app.add_handler(CommandHandler("lembrar_partida", enviar_lembrete_partida))
 app.add_handler(CommandHandler("curiosidades", curiosidades))
 app.add_handler(CommandHandler("noticias", noticias))
 app.add_handler(CommandHandler("agendar", agendar))
 
-app.add_handler(CommandHandler("lembrar", lembrar))
+app.add_handler(CommandHandler("enviar_mensagem", enviar_mensagem))
 
 # Adiciona o handler global de erros
 app.add_error_handler(erro_handler)
@@ -172,3 +175,4 @@ print(f"TOKEN: {token}")
 if __name__ == "__main__":
     print("Bot da FURIA rodando")
     app.run_polling()
+
