@@ -23,7 +23,7 @@ Este é um bot do Telegram desenvolvido para os fãs da equipe de CS:GO **FURIA*
 
 1. Clone ou baixe este repositório:
    ```bash
-   git clone https://github.com/seuusuario/furia-bot.git
+   git clone https://github.com/pedrobellinetti/challenge1-furia-chatbot.git
    cd furia-bot/challenge1-furia-fan-chatbot
    ```
 
@@ -72,3 +72,5 @@ challenge1-furia-fan-chatbot/
 ---
 
 Feito com 💛 para os fãs da FURIA!
+
+Obs: Projeto inteiro foi desenvolvido usando o ambiente virtual do python!
